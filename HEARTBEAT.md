@@ -1,5 +1,38 @@
-# HEARTBEAT.md
+# HEARTBEAT.md - 定时任务配置
 
-# Keep this file empty (or with only comments) to skip heartbeat API calls.
+## 自动备份和定期检查
 
-# Add tasks below when you want the agent to check something periodically.
+每次心跳时执行以下任务：
+
+1. **Git 自动备份**
+   - 检查是否有未提交的更改
+   - 如果有，自动 commit 并 push
+
+2. **学习提醒**（每周一、三、五 上午 10 点提醒）
+   - 设计模式学习
+   - 数据结构学习
+   - Java内存模型
+   - 多线程、锁
+   - 高并发
+   - 高可用
+
+3. **生活提醒**
+**生活提醒**
+   - 每两周提醒：该见女朋友了（陈严）
+   - 每天提醒：关注睡眠质量
+   - 每周提醒：给好兄弟发消息（车志伟、杨飞龙、贾超超、朱波波、贾山又）
+
+4. **健康检查**
+   - 每天提醒：关注健康状况
+   - 睡眠情况追踪
+
+## 执行频率
+
+- 每小时执行一次
+- 避免重复提醒（记录上次提醒时间）
+
+## 注意事项
+
+- 避免在深夜（23:00-08:00）发送打扰性提醒
+- 重要提醒可以发送到企业微信或 QQ
+- 记录所有提醒到 memory/ 文件
