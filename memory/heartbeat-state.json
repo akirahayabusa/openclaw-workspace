@@ -1,1 +1,8 @@
-{"lastChecks": {"daily-reminder": null, "weekly-reminder": null, "biweekly-reminder": null}}
+{
+  "lastChecks": {
+    "daily-reminder": "2026-03-26",
+    "weekly-reminder": "2026-03-26",
+    "biweekly-reminder": "2026-03-26",
+    "last-heartbeat": "2026-03-26T10:22:00+08:00"
+  }
+}
