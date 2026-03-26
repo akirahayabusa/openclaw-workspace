@@ -1,6 +1,6 @@
 # MEMORY.md - 长期记忆
 
-这里是艾琳（AI助手）的长期记忆文件。重要的信息、决策、偏好会记录在这里。
+这里是艾艾（AI助手）的长期记忆文件。重要的信息、决策、偏好会记录在这里。
 
 ## 关于蔡昭（哈雅布撒）
 
@@ -14,6 +14,16 @@
 - **联系方式：**
   - 手机：17315093556
   - 邮件：2682557218@qq.com
+
+## GitHub
+
+- **用户名：** akirahayabusa
+- **仓库：** https://github.com/akirahayabusa/openclaw-workspace
+- **用途：** OpenClaw AI Assistant Workspace
+- **配置：**
+  - SSH key 已生成（~/.ssh/id_ed25519）
+  - Git remote 已配置
+  - 自动备份已启用（Heartbeat）
 
 ## 工作
 
@@ -80,6 +90,7 @@
 - 2024-02-16：哥哥蔡健去世
 - 2026-03-26：建立记忆系统，开始记录重要信息
 - 2026-03-26：入职苏州友达光电，达智汇部门
+- 2026-03-26：配置 GitHub 仓库（akirahayabusa/openclaw-workspace）
 
 ## 待记录的事项
 
