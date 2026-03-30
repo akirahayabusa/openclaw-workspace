@@ -44,3 +44,7 @@ nohup.out
 *.bak
 *.swp
 *~
+
+# H2 Database
+*.mv.db
+*.trace.db
