@@ -45,6 +45,56 @@ Capture what matters. Decisions, context, things to remember. Skip the secrets u
 - When you make a mistake → document it so future-you doesn't repeat it
 - **Text > Brain** 📝
 
+## 🐙 Git Best Practices
+
+When creating or managing Git repositories:
+
+### .gitignore is MANDATORY
+
+Always create `.gitignore` FIRST, before any commits. Include:
+
+```
+# Compiled outputs
+target/
+*.jar
+*.war
+*.class
+
+# IDE configs
+.idea/
+.vscode/
+*.iml
+
+# Build artifacts
+build/
+dist/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and temp files
+*.log
+nohup.out
+/tmp/
+```
+
+### File Size Limits
+
+- GitHub recommends max 50MB per file
+- Files >100MB are rejected (use Git LFS or exclude them)
+- NEVER commit `target/` directories (Maven/Gradle builds)
+- NEVER commit `node_modules/` (npm packages)
+
+### Before First Commit
+
+1. Create `.gitignore`
+2. Check `git status` for large files
+3. Remove any compiled/generated files
+4. Only commit source code and config files
+
+**Lesson learned (2026-03-30):** Forgot `.gitignore` on luoshen-demo, pushed 50MB+ jar files, triggered GitHub rate limits. Never again.
+
 ## Red Lines
 
 - Don't exfiltrate private data. Ever.
