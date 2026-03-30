@@ -5,7 +5,8 @@ package io.luoshen.admin.controller;
 
 import io.luoshen.admin.model.AgentConfigEntity;
 import io.luoshen.admin.service.AgentDynamicService;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +17,14 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/admin/agents")
-@RequiredArgsConstructor
 public class AgentManagementController {
     
     private final AgentDynamicService agentDynamicService;
+    
+    @Autowired
+    public AgentManagementController(@Lazy AgentDynamicService agentDynamicService) {
+        this.agentDynamicService = agentDynamicService;
+    }
     
     /**
      * 获取所有 Agent 配置
