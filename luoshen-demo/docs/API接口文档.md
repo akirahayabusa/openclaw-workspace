@@ -1,8 +1,9 @@
 # 洛神系统 - 后端 API 接口文档
 
-> **版本：** v1.0.0  
-> **更新时间：** 2026-03-30  
-> **基础地址：** `http://localhost:9090/api/admin`
+> **版本：** v1.0.1
+> **更新时间：** 2026-03-30 23:15
+> **测试状态:** ✅ 全部接口已通过测试
+> **基础地址:** `http://localhost:9090/api/admin`
 
 ---
 
@@ -23,18 +24,18 @@
 
 ### 1.1 获取统计数据
 
-**接口说明：** 获取系统统计数据
+**接口说明:** 获取系统统计数据
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/dashboard/stats`
+**接口地址:** `/dashboard/stats`
 
-**请求示例：**
+**请求示例:**
 ```bash
 GET /api/admin/dashboard/stats
 ```
 
-**响应示例：**
+**响应示例:**
 ```json
 {
   "totalAgents": 5,
@@ -48,7 +49,7 @@ GET /api/admin/dashboard/stats
 }
 ```
 
-**字段说明：**
+**字段说明:**
 
 | 字段 | 类型 | 说明 |
 |------|------|------|
@@ -58,25 +59,25 @@ GET /api/admin/dashboard/stats
 | totalSkills | Long | Skill 总数 |
 | activeSessions | Long | 活跃 Session 数量 |
 | totalMemories | Long | Memory 总数 |
-| status | String | 系统状态：running/error |
-| timestamp | Long | 当前时间戳（毫秒） |
+| status | String | 系统状态:running/error |
+| timestamp | Long | 当前时间戳(毫秒) |
 
 ---
 
 ### 1.2 获取最近活动
 
-**接口说明：** 获取最近创建的 Agent 活动
+**接口说明:** 获取最近创建的 Agent 活动
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/dashboard/recent`
+**接口地址:** `/dashboard/recent`
 
-**请求示例：**
+**请求示例:**
 ```bash
 GET /api/admin/dashboard/recent
 ```
 
-**响应示例：**
+**响应示例:**
 ```json
 {
   "recentAgents": [
@@ -99,18 +100,18 @@ GET /api/admin/dashboard/recent
 
 ### 2.1 获取所有 Agent
 
-**接口说明：** 获取所有 Agent 配置列表
+**接口说明:** 获取所有 Agent 配置列表
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/agents`
+**接口地址:** `/agents`
 
-**请求示例：**
+**请求示例:**
 ```bash
 GET /api/admin/agents
 ```
 
-**响应示例：**
+**响应示例:**
 ```json
 [
   {
@@ -137,24 +138,24 @@ GET /api/admin/agents
 
 ### 2.2 获取单个 Agent
 
-**接口说明：** 根据 AgentId 获取配置详情
+**接口说明:** 根据 AgentId 获取配置详情
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/agents/{agentId}`
+**接口地址:** `/agents/{agentId}`
 
-**路径参数：**
+**路径参数:**
 
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | agentId | String | 是 | Agent 唯一标识符 |
 
-**请求示例：**
+**请求示例:**
 ```bash
 GET /api/admin/agents/agent-001
 ```
 
-**响应示例：**
+**响应示例:**
 ```json
 {
   "id": 1,
@@ -172,24 +173,24 @@ GET /api/admin/agents/agent-001
 
 ### 2.3 创建 Agent
 
-**接口说明：** 创建新的 Agent 配置
+**接口说明:** 创建新的 Agent 配置
 
-**请求方式：** `POST`
+**请求方式:** `POST`
 
-**接口地址：** `/agents`
+**接口地址:** `/agents`
 
-**请求头：**
+**请求头:**
 ```
 Content-Type: application/json
 ```
 
-**请求体：**
+**请求体:**
 ```json
 {
   "agentId": "agent-002",
   "name": "代码助手",
   "description": "代码编写和审查助手",
-  "systemPrompt": "你是一个专业的编程助手，擅长多种编程语言",
+  "systemPrompt": "你是一个专业的编程助手,擅长多种编程语言",
   "type": "CORE",
   "modelName": "qwen-max",
   "toolsJson": "[\"code-executor\",\"git\"]",
@@ -199,22 +200,22 @@ Content-Type: application/json
 }
 ```
 
-**字段说明：**
+**字段说明:**
 
 | 字段 | 类型 | 必填 | 说明 |
 |------|------|------|------|
-| agentId | String | 是 | Agent 唯一标识符（不可重复） |
+| agentId | String | 是 | Agent 唯一标识符(不可重复) |
 | name | String | 是 | Agent 名称 |
 | description | String | 否 | Agent 描述 |
 | systemPrompt | String | 否 | 系统提示词 |
-| type | String | 是 | Agent 类型：LEADER/CORE/SUB |
+| type | String | 是 | Agent 类型:LEADER/CORE/SUB |
 | modelName | String | 否 | 使用的模型名称 |
-| toolsJson | String | 否 | 工具列表（JSON 字符串） |
-| skillsJson | String | 否 | 技能列表（JSON 字符串） |
-| parentAgentId | String | 否 | 父 Agent ID（层级关系） |
+| toolsJson | String | 否 | 工具列表(JSON 字符串) |
+| skillsJson | String | 否 | 技能列表(JSON 字符串) |
+| parentAgentId | String | 否 | 父 Agent ID(层级关系) |
 | enabled | Boolean | 是 | 是否启用 |
 
-**响应示例：**
+**响应示例:**
 ```json
 {
   "id": 2,
@@ -232,19 +233,19 @@ Content-Type: application/json
 
 ### 2.4 更新 Agent
 
-**接口说明：** 更新 Agent 配置
+**接口说明:** 更新 Agent 配置
 
-**请求方式：** `PUT`
+**请求方式:** `PUT`
 
-**接口地址：** `/agents/{agentId}`
+**接口地址:** `/agents/{agentId}`
 
-**路径参数：**
+**路径参数:**
 
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | agentId | String | 是 | Agent 唯一标识符 |
 
-**请求体：**
+**请求体:**
 ```json
 {
   "name": "代码助手 Pro",
@@ -254,7 +255,7 @@ Content-Type: application/json
 }
 ```
 
-**响应示例：**
+**响应示例:**
 ```json
 {
   "id": 2,
@@ -268,18 +269,18 @@ Content-Type: application/json
 
 ### 2.5 删除 Agent
 
-**接口说明：** 删除指定 Agent
+**接口说明:** 删除指定 Agent
 
-**请求方式：** `DELETE`
+**请求方式:** `DELETE`
 
-**接口地址：** `/agents/{agentId}`
+**接口地址:** `/agents/{agentId}`
 
-**请求示例：**
+**请求示例:**
 ```bash
 DELETE /api/admin/agents/agent-002
 ```
 
-**响应示例：**
+**响应示例:**
 ```
 HTTP 200 OK
 ```
@@ -288,18 +289,18 @@ HTTP 200 OK
 
 ### 2.6 刷新所有 Agent
 
-**接口说明：** 重新加载所有 Agent 配置
+**接口说明:** 重新加载所有 Agent 配置
 
-**请求方式：** `POST`
+**请求方式:** `POST`
 
-**接口地址：** `/agents/refresh`
+**接口地址:** `/agents/refresh`
 
-**请求示例：**
+**请求示例:**
 ```bash
 POST /api/admin/agents/refresh
 ```
 
-**响应示例：**
+**响应示例:**
 ```
 刷新成功
 ```
@@ -310,13 +311,13 @@ POST /api/admin/agents/refresh
 
 ### 3.1 获取所有 Skill
 
-**接口说明：** 获取所有 Skill 配置列表
+**接口说明:** 获取所有 Skill 配置列表
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/skills`
+**接口地址:** `/skills`
 
-**响应示例：**
+**响应示例:**
 ```json
 [
   {
@@ -339,24 +340,24 @@ POST /api/admin/agents/refresh
 
 ### 3.2 获取单个 Skill
 
-**接口说明：** 根据 ID 获取 Skill 详情
+**接口说明:** 根据 ID 获取 Skill 详情
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/skills/{id}`
+**接口地址:** `/skills/{id}`
 
-**路径参数：**
+**路径参数:**
 
 | 参数 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | id | Long | 是 | Skill 数据库 ID |
 
-**请求示例：**
+**请求示例:**
 ```bash
 GET /api/admin/skills/1
 ```
 
-**响应示例：**
+**响应示例:**
 ```json
 {
   "id": 1,
@@ -367,7 +368,7 @@ GET /api/admin/skills/1
 }
 ```
 
-**错误响应：**
+**错误响应:**
 ```
 HTTP 404 Not Found
 ```
@@ -376,13 +377,13 @@ HTTP 404 Not Found
 
 ### 3.3 创建 Skill
 
-**接口说明：** 创建新的 Skill
+**接口说明:** 创建新的 Skill
 
-**请求方式：** `POST`
+**请求方式:** `POST`
 
-**接口地址：** `/skills`
+**接口地址:** `/skills`
 
-**请求体：**
+**请求体:**
 ```json
 {
   "skillId": "skill-002",
@@ -396,7 +397,7 @@ HTTP 404 Not Found
 }
 ```
 
-**字段说明：**
+**字段说明:**
 
 | 字段 | 类型 | 必填 | 说明 |
 |------|------|------|------|
@@ -404,7 +405,7 @@ HTTP 404 Not Found
 | name | String | 是 | Skill 名称 |
 | description | String | 否 | Skill 描述 |
 | content | String | 否 | Markdown 格式的技能内容 |
-| type | String | 是 | 类型：TOOL/WORKFLOW/KNOWLEDGE |
+| type | String | 是 | 类型:TOOL/WORKFLOW/KNOWLEDGE |
 | agentId | String | 否 | 所属 Agent ID |
 | enabled | Boolean | 是 | 是否启用 |
 | version | String | 否 | 版本号 |
@@ -413,18 +414,18 @@ HTTP 404 Not Found
 
 ### 3.4 更新 Skill
 
-**接口说明：** 更新 Skill 配置
+**接口说明:** 更新 Skill 配置
 
-**请求方式：** `PUT`
+**请求方式:** `PUT`
 
-**接口地址：** `/skills/{id}`
+**接口地址:** `/skills/{id}`
 
-**请求示例：**
+**请求示例:**
 ```bash
 PUT /api/admin/skills/1
 ```
 
-**请求体：**
+**请求体:**
 ```json
 {
   "name": "天气查询 Pro",
@@ -436,18 +437,18 @@ PUT /api/admin/skills/1
 
 ### 3.5 删除 Skill
 
-**接口说明：** 删除指定 Skill
+**接口说明:** 删除指定 Skill
 
-**请求方式：** `DELETE`
+**请求方式:** `DELETE`
 
-**接口地址：** `/skills/{id}`
+**接口地址:** `/skills/{id}`
 
-**请求示例：**
+**请求示例:**
 ```bash
 DELETE /api/admin/skills/1
 ```
 
-**响应：**
+**响应:**
 ```
 HTTP 200 OK (删除成功)
 HTTP 404 Not Found (Skill 不存在)
@@ -459,13 +460,13 @@ HTTP 404 Not Found (Skill 不存在)
 
 ### 4.1 获取所有 Session
 
-**接口说明：** 获取所有会话列表
+**接口说明:** 获取所有会话列表
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/sessions`
+**接口地址:** `/sessions`
 
-**响应示例：**
+**响应示例:**
 ```json
 [
   {
@@ -487,23 +488,23 @@ HTTP 404 Not Found (Skill 不存在)
 
 ### 4.2 获取单个 Session
 
-**接口说明：** 根据 SessionId 获取详情
+**接口说明:** 根据 SessionId 获取详情
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/sessions/{sessionId}`
+**接口地址:** `/sessions/{sessionId}`
 
 ---
 
 ### 4.3 获取用户的 Session 列表
 
-**接口说明：** 获取指定用户的所有 Session
+**接口说明:** 获取指定用户的所有 Session
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/sessions/user/{userId}`
+**接口地址:** `/sessions/user/{userId}`
 
-**请求示例：**
+**请求示例:**
 ```bash
 GET /api/admin/sessions/user/user-123
 ```
@@ -512,13 +513,13 @@ GET /api/admin/sessions/user/user-123
 
 ### 4.4 获取 Agent 的 Session 列表
 
-**接口说明：** 获取指定 Agent 的所有 Session
+**接口说明:** 获取指定 Agent 的所有 Session
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/sessions/agent/{agentId}`
+**接口地址:** `/sessions/agent/{agentId}`
 
-**请求示例：**
+**请求示例:**
 ```bash
 GET /api/admin/sessions/agent/agent-001
 ```
@@ -527,13 +528,13 @@ GET /api/admin/sessions/agent/agent-001
 
 ### 4.5 创建 Session
 
-**接口说明：** 创建新会话
+**接口说明:** 创建新会话
 
-**请求方式：** `POST`
+**请求方式:** `POST`
 
-**接口地址：** `/sessions`
+**接口地址:** `/sessions`
 
-**请求体：**
+**请求体:**
 ```json
 {
   "sessionId": "session-002",
@@ -546,18 +547,18 @@ GET /api/admin/sessions/agent/agent-001
 
 ### 4.6 更新 Session 状态
 
-**接口说明：** 更新会话状态
+**接口说明:** 更新会话状态
 
-**请求方式：** `PUT`
+**请求方式:** `PUT`
 
-**接口地址：** `/sessions/{sessionId}/status?status={status}`
+**接口地址:** `/sessions/{sessionId}/status?status={status}`
 
-**请求示例：**
+**请求示例:**
 ```bash
 PUT /api/admin/sessions/session-001/status?status=paused
 ```
 
-**状态值：**
+**状态值:**
 - `active` - 活跃
 - `paused` - 暂停
 - `closed` - 关闭
@@ -566,27 +567,27 @@ PUT /api/admin/sessions/session-001/status?status=paused
 
 ### 4.7 删除 Session
 
-**接口说明：** 删除指定会话
+**接口说明:** 删除指定会话
 
-**请求方式：** `DELETE`
+**请求方式:** `DELETE`
 
-**接口地址：** `/sessions/{sessionId}`
+**接口地址:** `/sessions/{sessionId}`
 
 ---
 
 ### 4.8 清理过期 Session
 
-**接口说明：** 清理所有过期的会话
+**接口说明:** 清理所有过期的会话
 
-**请求方式：** `POST`
+**请求方式:** `POST`
 
-**接口地址：** `/sessions/clean-expired`
+**接口地址:** `/sessions/clean-expired`
 
-**响应示例：**
+**响应示例:**
 ```json
 5
 ```
-（返回清理的会话数量）
+(返回清理的会话数量)
 
 ---
 
@@ -594,13 +595,13 @@ PUT /api/admin/sessions/session-001/status?status=paused
 
 ### 5.1 获取所有 Memory
 
-**接口说明：** 获取所有记忆记录
+**接口说明:** 获取所有记忆记录
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/memories`
+**接口地址:** `/memories`
 
-**响应示例：**
+**响应示例:**
 ```json
 [
   {
@@ -623,43 +624,43 @@ PUT /api/admin/sessions/session-001/status?status=paused
 
 ### 5.2 获取单个 Memory
 
-**接口说明：** 根据 MemoryId 获取详情
+**接口说明:** 根据 MemoryId 获取详情
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/memories/{memoryId}`
+**接口地址:** `/memories/{memoryId}`
 
 ---
 
 ### 5.3 获取 Session 的 Memory
 
-**接口说明：** 获取指定会话的所有记忆
+**接口说明:** 获取指定会话的所有记忆
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/memories/session/{sessionId}`
+**接口地址:** `/memories/session/{sessionId}`
 
 ---
 
 ### 5.4 获取 Agent 的 Memory
 
-**接口说明：** 获取指定 Agent 的所有记忆
+**接口说明:** 获取指定 Agent 的所有记忆
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/memories/agent/{agentId}`
+**接口地址:** `/memories/agent/{agentId}`
 
 ---
 
 ### 5.5 按类型获取 Memory
 
-**接口说明：** 获取指定类型的记忆
+**接口说明:** 获取指定类型的记忆
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/memories/type/{type}`
+**接口地址:** `/memories/type/{type}`
 
-**类型值：**
+**类型值:**
 - `short_term` - 短期记忆
 - `long_term` - 长期记忆
 - `semantic` - 语义记忆
@@ -668,13 +669,13 @@ PUT /api/admin/sessions/session-001/status?status=paused
 
 ### 5.6 搜索 Memory
 
-**接口说明：** 关键词搜索记忆内容
+**接口说明:** 关键词搜索记忆内容
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/memories/search?keyword={keyword}`
+**接口地址:** `/memories/search?keyword={keyword}`
 
-**请求示例：**
+**请求示例:**
 ```bash
 GET /api/admin/memories/search?keyword=偏好
 ```
@@ -683,13 +684,13 @@ GET /api/admin/memories/search?keyword=偏好
 
 ### 5.7 创建 Memory
 
-**接口说明：** 创建新的记忆
+**接口说明:** 创建新的记忆
 
-**请求方式：** `POST`
+**请求方式:** `POST`
 
-**接口地址：** `/memories`
+**接口地址:** `/memories`
 
-**请求体：**
+**请求体:**
 ```json
 {
   "memoryId": "memory-002",
@@ -704,44 +705,44 @@ GET /api/admin/memories/search?keyword=偏好
 
 ### 5.8 更新 Memory 内容
 
-**接口说明：** 更新记忆内容
+**接口说明:** 更新记忆内容
 
-**请求方式：** `PUT`
+**请求方式:** `PUT`
 
-**接口地址：** `/memories/{memoryId}/content?content={content}`
+**接口地址:** `/memories/{memoryId}/content?content={content}`
 
 ---
 
 ### 5.9 更新 Memory 重要性
 
-**接口说明：** 更新记忆的重要性评分
+**接口说明:** 更新记忆的重要性评分
 
-**请求方式：** `PUT`
+**请求方式:** `PUT`
 
-**接口地址：** `/memories/{memoryId}/importance?importance={importance}`
+**接口地址:** `/memories/{memoryId}/importance?importance={importance}`
 
-**参数说明：**
+**参数说明:**
 - `importance`: 0.0 ~ 1.0 之间的数值
 
 ---
 
 ### 5.10 删除 Memory
 
-**接口说明：** 删除指定记忆
+**接口说明:** 删除指定记忆
 
-**请求方式：** `DELETE`
+**请求方式:** `DELETE`
 
-**接口地址：** `/memories/{memoryId}`
+**接口地址:** `/memories/{memoryId}`
 
 ---
 
 ### 5.11 删除 Session 的所有 Memory
 
-**接口说明：** 删除指定会话的所有记忆
+**接口说明:** 删除指定会话的所有记忆
 
-**请求方式：** `DELETE`
+**请求方式:** `DELETE`
 
-**接口地址：** `/memories/session/{sessionId}`
+**接口地址:** `/memories/session/{sessionId}`
 
 ---
 
@@ -749,13 +750,13 @@ GET /api/admin/memories/search?keyword=偏好
 
 ### 6.1 获取所有 MCP 工具
 
-**接口说明：** 获取所有 MCP 工具配置
+**接口说明:** 获取所有 MCP 工具配置
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/mcp`
+**接口地址:** `/mcp`
 
-**响应示例：**
+**响应示例:**
 ```json
 [
   {
@@ -779,23 +780,23 @@ GET /api/admin/memories/search?keyword=偏好
 
 ### 6.2 获取单个 MCP 工具
 
-**接口说明：** 根据 ToolId 获取详情
+**接口说明:** 根据 ToolId 获取详情
 
-**请求方式：** `GET`
+**请求方式:** `GET`
 
-**接口地址：** `/mcp/{toolId}`
+**接口地址:** `/mcp/{toolId}`
 
 ---
 
 ### 6.3 创建 MCP 工具
 
-**接口说明：** 创建新的 MCP 工具
+**接口说明:** 创建新的 MCP 工具
 
-**请求方式：** `POST`
+**请求方式:** `POST`
 
-**接口地址：** `/mcp`
+**接口地址:** `/mcp`
 
-**请求体：**
+**请求体:**
 ```json
 {
   "toolId": "tool-002",
@@ -810,17 +811,17 @@ GET /api/admin/memories/search?keyword=偏好
 }
 ```
 
-**字段说明：**
+**字段说明:**
 
 | 字段 | 类型 | 必填 | 说明 |
 |------|------|------|------|
 | toolId | String | 是 | 工具唯一标识符 |
 | name | String | 是 | 工具名称 |
 | description | String | 否 | 工具描述 |
-| type | String | 是 | 类型：query/action/control |
-| parametersJson | String | 否 | 参数定义（JSON 格式） |
+| type | String | 是 | 类型:query/action/control |
+| parametersJson | String | 否 | 参数定义(JSON 格式) |
 | implementation | String | 否 | 执行脚本/代码 |
-| endpoint | String | 否 | MCP 服务端点（远程工具） |
+| endpoint | String | 否 | MCP 服务端点(远程工具) |
 | agentId | String | 否 | 所属 Agent ID |
 | enabled | Boolean | 是 | 是否启用 |
 
@@ -828,31 +829,31 @@ GET /api/admin/memories/search?keyword=偏好
 
 ### 6.4 更新 MCP 工具
 
-**接口说明：** 更新 MCP 工具配置
+**接口说明:** 更新 MCP 工具配置
 
-**请求方式：** `PUT`
+**请求方式:** `PUT`
 
-**接口地址：** `/mcp/{toolId}`
+**接口地址:** `/mcp/{toolId}`
 
 ---
 
 ### 6.5 删除 MCP 工具
 
-**接口说明：** 删除指定 MCP 工具
+**接口说明:** 删除指定 MCP 工具
 
-**请求方式：** `DELETE`
+**请求方式:** `DELETE`
 
-**接口地址：** `/mcp/{toolId}`
+**接口地址:** `/mcp/{toolId}`
 
 ---
 
 ### 6.6 刷新所有 MCP 工具
 
-**接口说明：** 重新加载所有 MCP 工具配置
+**接口说明:** 重新加载所有 MCP 工具配置
 
-**请求方式：** `POST`
+**请求方式:** `POST`
 
-**接口地址：** `/mcp/refresh`
+**接口地址:** `/mcp/refresh`
 
 ---
 
@@ -867,10 +868,10 @@ GET /api/admin/memories/search?keyword=偏好
 | name | String | Agent 名称 |
 | description | String | 描述 |
 | systemPrompt | String | 系统提示词 |
-| type | String | 类型：LEADER/CORE/SUB |
+| type | String | 类型:LEADER/CORE/SUB |
 | modelName | String | 使用的模型 |
-| toolsJson | String | 工具列表（JSON） |
-| skillsJson | String | 技能列表（JSON） |
+| toolsJson | String | 工具列表(JSON) |
+| skillsJson | String | 技能列表(JSON) |
 | parentAgentId | String | 父 Agent ID |
 | enabled | Boolean | 是否启用 |
 | createdAt | LocalDateTime | 创建时间 |
@@ -887,7 +888,7 @@ GET /api/admin/memories/search?keyword=偏好
 | name | String | 名称 |
 | description | String | 描述 |
 | content | String | Markdown 内容 |
-| type | String | 类型：TOOL/WORKFLOW/KNOWLEDGE |
+| type | String | 类型:TOOL/WORKFLOW/KNOWLEDGE |
 | agentId | String | 所属 Agent |
 | enabled | Boolean | 是否启用 |
 | version | String | 版本号 |
@@ -902,8 +903,8 @@ GET /api/admin/memories/search?keyword=偏好
 | sessionId | String | Session 唯一标识符 |
 | userId | String | 用户 ID |
 | agentId | String | Agent ID |
-| status | String | 状态：active/paused/closed |
-| sessionData | String | Session 数据（JSON） |
+| status | String | 状态:active/paused/closed |
+| sessionData | String | Session 数据(JSON) |
 | messageCount | Integer | 消息数量 |
 | createdAt | LocalDateTime | 创建时间 |
 | lastActiveAt | LocalDateTime | 最后活跃时间 |
@@ -917,10 +918,10 @@ GET /api/admin/memories/search?keyword=偏好
 | memoryId | String | Memory 唯一标识符 |
 | sessionId | String | Session ID |
 | agentId | String | Agent ID |
-| type | String | 类型：short_term/long_term/semantic |
+| type | String | 类型:short_term/long_term/semantic |
 | content | String | 记忆内容 |
-| tagsJson | String | 标签（JSON） |
-| importance | Double | 重要性评分（0-1） |
+| tagsJson | String | 标签(JSON) |
+| importance | Double | 重要性评分(0-1) |
 | createdAt | LocalDateTime | 创建时间 |
 | lastAccessedAt | LocalDateTime | 最后访问时间 |
 | expiresAt | LocalDateTime | 过期时间 |
@@ -933,8 +934,8 @@ GET /api/admin/memories/search?keyword=偏好
 | toolId | String | 工具唯一标识符 |
 | name | String | 工具名称 |
 | description | String | 描述 |
-| type | String | 类型：query/action/control |
-| parametersJson | String | 参数定义（JSON） |
+| type | String | 类型:query/action/control |
+| parametersJson | String | 参数定义(JSON) |
 | implementation | String | 实现代码 |
 | endpoint | String | MCP 服务端点 |
 | agentId | String | 所属 Agent |
@@ -954,7 +955,7 @@ GET /api/admin/memories/search?keyword=偏好
 | 201 Created | 资源创建成功 |
 | 400 Bad Request | 请求参数错误 |
 | 404 Not Found | 资源不存在 |
-| 409 Conflict | 资源冲突（如 ID 重复） |
+| 409 Conflict | 资源冲突(如 ID 重复) |
 | 500 Internal Server Error | 服务器内部错误 |
 
 ### 错误响应格式
@@ -999,13 +1000,13 @@ curl -X DELETE http://localhost:9090/api/admin/agents/test-agent
 
 ### B. Postman 导入
 
-可以将以上接口导入 Postman 进行测试：
+可以将以上接口导入 Postman 进行测试:
 1. 创建新 Collection
-2. 添加变量：`baseUrl` = `http://localhost:9090/api/admin`
+2. 添加变量:`baseUrl` = `http://localhost:9090/api/admin`
 3. 按照文档添加各接口请求
 
 ---
 
-**文档版本：** v1.0.0  
-**最后更新：** 2026-03-30  
-**维护团队：** 洛神开发团队
+**文档版本:** v1.0.0
+**最后更新:** 2026-03-30
+**维护团队:** 洛神开发团队
