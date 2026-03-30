@@ -55,7 +55,7 @@ public class MaterialAgentApplication {
             try {
                 Msg userMsg = Msg.builder()
                         .role(MsgRole.USER)
-                        .content(TextBlock.builder().text(request.getMessage()).build())
+                        .content(TextBlock.builder().text(request.message()).build())
                         .build();
                 
                 Msg response = materialAgent.call(userMsg).block();

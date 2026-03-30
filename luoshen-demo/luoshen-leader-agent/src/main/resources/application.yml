@@ -1,52 +1,20 @@
-# Luoshen Leader Agent 配置
-
 server:
   port: 8080
+  address: 0.0.0.0
 
 spring:
   application:
     name: luoshen-leader-agent
 
-# 洛神系统配置
 luoshen:
-  # 模型配置
   model:
-    # 模型提供商: dashscope (通义千问) 或 openai
     provider: dashscope
-    
-    # DashScope 配置
     dashscope:
-      # API Key（建议通过环境变量设置）
-      api-key: ${DASHSCOPE_API_KEY:}
-      # 模型名称
-      model-name: qwen-max
-      # 自定义 Base URL（可选）
-      base-url: -
-    
-    # OpenAI 配置（如果使用 OpenAI）
-    openai:
-      api-key: ${OPENAI_API_KEY:}
-      model-name: gpt-4
-      base-url: -
-    
-    # 是否启用流式输出
+      apiKey: ${DASHSCOPE_API_KEY:62772ac7-cacd-4dbe-98b0-fbb26035d92b}
+      modelName: qwen-max
     stream: true
-    # 是否启用思考模式
     enable-thinking: false
-  
-  # Session 配置
-  session:
-    # 会话存储路径
-    path: ${user.home}/.luoshen/sessions
-  
-  # Memory 配置
-  memory:
-    # 记忆类型: in-memory 或 rag
-    type: in-memory
-    # 最大记忆条数
-    max-size: 100
 
-# 日志配置
 logging:
   level:
     io.agentscope: INFO

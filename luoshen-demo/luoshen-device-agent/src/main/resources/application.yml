@@ -1,31 +1,22 @@
-# Luoshen Device Agent 配置
-
 server:
   port: 8081
+  address: 0.0.0.0
 
 spring:
   application:
     name: luoshen-device-agent
 
-# 洛神系统配置
 luoshen:
   model:
     provider: dashscope
     dashscope:
-      api-key: ${DASHSCOPE_API_KEY:}
-      model-name: qwen-max
-      base-url: -
+      apiKey: ${DASHSCOPE_API_KEY:62772ac7-cacd-4dbe-98b0-fbb26035d92b}
+      modelName: qwen-max
     stream: true
     enable-thinking: false
-  
-  session:
-    path: ${user.home}/.luoshen/sessions
-  
-  memory:
-    type: in-memory
-    max-size: 100
 
 logging:
   level:
     io.agentscope: INFO
     io.luoshen: DEBUG
+    org.springframework: INFO

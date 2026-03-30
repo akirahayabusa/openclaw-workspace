@@ -151,16 +151,14 @@ public class MaterialTools {
     public String queryPurchaseRequests(
             @ToolParam(name = "status", description = "申请状态: pending, approved, rejected, all", required = false) String status) {
         
-        if (status == null || status.isEmpty()) {
-            status = "all";
-        }
+        String finalStatus = (status == null || status.isEmpty()) ? "all" : status;
         
         StringBuilder sb = new StringBuilder();
         sb.append("采购申请查询结果\n");
         sb.append("================\n\n");
         
         List<PurchaseRequest> filtered = purchaseRequests.stream()
-                .filter(r -> "all".equals(status) || r.status.equals(status))
+                .filter(r -> "all".equals(finalStatus) || r.status.equals(finalStatus))
                 .toList();
         
         if (filtered.isEmpty()) {

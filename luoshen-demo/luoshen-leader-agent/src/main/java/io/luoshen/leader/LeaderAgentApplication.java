@@ -60,7 +60,7 @@ public class LeaderAgentApplication {
          */
         @PostMapping("/chat")
         public ChatResponse chat(@RequestBody ChatRequest request,
-                                  @RequestParam(required = false) String sessionId) {
+                                  @RequestParam(value = "sessionId", required = false) String sessionId) {
             try {
                 // 加载会话（如果存在）
                 if (sessionId != null && !sessionId.isEmpty()) {
@@ -70,7 +70,7 @@ public class LeaderAgentApplication {
                 // 构建用户消息
                 Msg userMsg = Msg.builder()
                         .role(MsgRole.USER)
-                        .content(TextBlock.builder().text(request.getMessage()).build())
+                        .content(TextBlock.builder().text(request.message()).build())
                         .build();
                 
                 // 调用 Agent

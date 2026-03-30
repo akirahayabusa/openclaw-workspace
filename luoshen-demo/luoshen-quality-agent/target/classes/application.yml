@@ -1,0 +1,22 @@
+server:
+  port: 8082
+  address: 0.0.0.0
+
+spring:
+  application:
+    name: luoshen-quality-agent
+
+luoshen:
+  model:
+    provider: dashscope
+    dashscope:
+      apiKey: ${DASHSCOPE_API_KEY:62772ac7-cacd-4dbe-98b0-fbb26035d92b}
+      modelName: qwen-max
+    stream: true
+    enable-thinking: false
+
+logging:
+  level:
+    io.agentscope: INFO
+    io.luoshen: DEBUG
+    org.springframework: INFO

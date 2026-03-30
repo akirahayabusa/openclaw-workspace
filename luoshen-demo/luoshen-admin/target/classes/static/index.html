@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>洛神系统管理后台</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; }
+        
+        .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; }
+        .header h1 { font-size: 24px; }
+        .header p { opacity: 0.8; margin-top: 5px; }
+        
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab { padding: 10px 20px; background: white; border: none; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        .tab.active { background: #667eea; color: white; }
+        
+        .card { background: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .card h2 { font-size: 18px; margin-bottom: 15px; color: #333; }
+        
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .stat { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; }
+        .stat h3 { font-size: 32px; }
+        .stat p { opacity: 0.8; margin-top: 5px; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { background: #f8f9fa; font-weight: 600; }
+        tr:hover { background: #f8f9fa; }
+        
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; margin-right: 5px; }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        
+        .badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-danger { background: #f8d7da; color: #721c24; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select { 
+            width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; 
+        }
+        .form-group textarea { min-height: 100px; }
+        
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal.show { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background: white; padding: 30px; border-radius: 12px; width: 500px; max-height: 80vh; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-close { background: none; border: none; font-size: 24px; cursor: pointer; }
+        
+        .panel { display: none; }
+        .panel.active { display: block; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1>🦞 洛神系统管理后台</h1>
+            <p>动态管理 Agent、Skill、MCP、Session、Memory</p>
+        </div>
+    </div>
+    
+    <div class="container">
+        <!-- 统计卡片 -->
+        <div class="stats">
+            <div class="stat">
+                <h3 id="agentCount">0</h3>
+                <p>Agent 数量</p>
+            </div>
+            <div class="stat">
+                <h3 id="skillCount">0</h3>
+                <p>Skill 数量</p>
+            </div>
+            <div class="stat">
+                <h3 id="mcpCount">0</h3>
+                <p>MCP 工具数量</p>
+            </div>
+            <div class="stat">
+                <h3 id="sessionCount">0</h3>
+                <p>活跃 Session</p>
+            </div>
+        </div>
+        
+        <!-- 标签页 -->
+        <div class="tabs">
+            <button class="tab active" onclick="showPanel('agents')">Agent 管理</button>
+            <button class="tab" onclick="showPanel('skills')">Skill 管理</button>
+            <button class="tab" onclick="showPanel('mcp')">MCP 管理</button>
+            <button class="tab" onclick="showPanel('sessions')">Session 管理</button>
+            <button class="tab" onclick="showPanel('memories')">Memory 管理</button>
+        </div>
+        
+        <!-- Agent 管理 -->
+        <div id="agents" class="panel active">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2>Agent 列表</h2>
+                    <div>
+                        <button class="btn btn-primary" onclick="showModal('createAgent')">创建 Agent</button>
+                        <button class="btn btn-success" onclick="refreshAgents()">刷新</button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>名称</th>
+                            <th>类型</th>
+                            <th>状态</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="agentTable"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Skill 管理 -->
+        <div id="skills" class="panel">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2>Skill 列表</h2>
+                    <div>
+                        <button class="btn btn-primary" onclick="showModal('createSkill')">创建 Skill</button>
+                        <button class="btn btn-success" onclick="refreshSkills()">刷新</button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>名称</th>
+                            <th>类型</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="skillTable"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- MCP 管理 -->
+        <div id="mcp" class="panel">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2>MCP 工具列表</h2>
+                    <div>
+                        <button class="btn btn-primary" onclick="showModal('createMcp')">创建 MCP</button>
+                        <button class="btn btn-success" onclick="refreshMcp()">刷新</button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>名称</th>
+                            <th>类型</th>
+                            <th>状态</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="mcpTable"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Session 管理 -->
+        <div id="sessions" class="panel">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2>Session 列表</h2>
+                    <button class="btn btn-success" onclick="refreshSessions()">刷新</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Session ID</th>
+                            <th>用户</th>
+                            <th>Agent</th>
+                            <th>状态</th>
+                            <th>消息数</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sessionTable"></tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Memory 管理 -->
+        <div id="memories" class="panel">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2>Memory 列表</h2>
+                    <button class="btn btn-success" onclick="refreshMemories()">刷新</button>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Memory ID</th>
+                            <th>Session</th>
+                            <th>类型</th>
+                            <th>内容</th>
+                            <th>重要性</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="memoryTable"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 创建 Agent 模态框 -->
+    <div id="createAgentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>创建 Agent</h2>
+                <button class="modal-close" onclick="hideModal('createAgent')">&times;</button>
+            </div>
+            <form id="createAgentForm">
+                <div class="form-group">
+                    <label>Agent ID</label>
+                    <input type="text" name="agentId" required placeholder="如: my-agent">
+                </div>
+                <div class="form-group">
+                    <label>名称</label>
+                    <input type="text" name="name" required placeholder="Agent 名称">
+                </div>
+                <div class="form-group">
+                    <label>类型</label>
+                    <select name="type">
+                        <option value="leader">Leader</option>
+                        <option value="core">Core</option>
+                        <option value="sub">Sub</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>描述</label>
+                    <input type="text" name="description" placeholder="Agent 描述">
+                </div>
+                <div class="form-group">
+                    <label>系统提示词</label>
+                    <textarea name="systemPrompt" placeholder="你是一个..."></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">创建</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = '';
+        
+        // 切换面板
+        function showPanel(panelId) {
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.getElementById(panelId).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // 显示/隐藏模态框
+        function showModal(name) {
+            document.getElementById(name + 'Modal').classList.add('show');
+        }
+        function hideModal(name) {
+            document.getElementById(name + 'Modal').classList.remove('show');
+        }
+        
+        // 加载数据
+        async function loadStats() {
+            try {
+                const [agents, skills, mcp, sessions] = await Promise.all([
+                    fetch(API_BASE + '/api/admin/agents').then(r => r.json()),
+                    fetch(API_BASE + '/api/admin/skills').then(r => r.json()),
+                    fetch(API_BASE + '/api/admin/mcp').then(r => r.json()),
+                    fetch(API_BASE + '/api/admin/sessions').then(r => r.json())
+                ]);
+                document.getElementById('agentCount').textContent = agents.length;
+                document.getElementById('skillCount').textContent = skills.length;
+                document.getElementById('mcpCount').textContent = mcp.length;
+                document.getElementById('sessionCount').textContent = sessions.filter(s => s.status === 'active').length;
+            } catch (e) {
+                console.error('加载统计失败', e);
+            }
+        }
+        
+        async function refreshAgents() {
+            const agents = await fetch(API_BASE + '/api/admin/agents').then(r => r.json());
+            const tbody = document.getElementById('agentTable');
+            tbody.innerHTML = agents.map(a => `
+                <tr>
+                    <td>${a.agentId}</td>
+                    <td>${a.name}</td>
+                    <td>${a.type}</td>
+                    <td><span class="badge ${a.enabled ? 'badge-success' : 'badge-danger'}">${a.enabled ? '启用' : '禁用'}</span></td>
+                    <td>${a.createdAt}</td>
+                    <td>
+                        <button class="btn btn-primary" onclick="editAgent('${a.agentId}')">编辑</button>
+                        <button class="btn btn-danger" onclick="deleteAgent('${a.agentId}')">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        async function refreshSkills() {
+            const skills = await fetch(API_BASE + '/api/admin/skills').then(r => r.json());
+            const tbody = document.getElementById('skillTable');
+            tbody.innerHTML = skills.map(s => `
+                <tr>
+                    <td>${s.skillId}</td>
+                    <td>${s.name}</td>
+                    <td>${s.type}</td>
+                    <td><span class="badge ${s.enabled ? 'badge-success' : 'badge-danger'}">${s.enabled ? '启用' : '禁用'}</span></td>
+                    <td>
+                        <button class="btn btn-primary" onclick="editSkill('${s.skillId}')">编辑</button>
+                        <button class="btn btn-danger" onclick="deleteSkill('${s.skillId}')">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        async function refreshMcp() {
+            const mcp = await fetch(API_BASE + '/api/admin/mcp').then(r => r.json());
+            const tbody = document.getElementById('mcpTable');
+            tbody.innerHTML = mcp.map(m => `
+                <tr>
+                    <td>${m.toolId}</td>
+                    <td>${m.name}</td>
+                    <td>${m.type}</td>
+                    <td><span class="badge ${m.enabled ? 'badge-success' : 'badge-danger'}">${m.enabled ? '启用' : '禁用'}</span></td>
+                    <td>
+                        <button class="btn btn-primary" onclick="editMcp('${m.toolId}')">编辑</button>
+                        <button class="btn btn-danger" onclick="deleteMcp('${m.toolId}')">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        async function refreshSessions() {
+            const sessions = await fetch(API_BASE + '/api/admin/sessions').then(r => r.json());
+            const tbody = document.getElementById('sessionTable');
+            tbody.innerHTML = sessions.map(s => `
+                <tr>
+                    <td>${s.sessionId}</td>
+                    <td>${s.userId}</td>
+                    <td>${s.agentId}</td>
+                    <td><span class="badge ${s.status === 'active' ? 'badge-success' : 'badge-danger'}">${s.status}</span></td>
+                    <td>${s.messageCount || 0}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteSession('${s.sessionId}')">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        async function refreshMemories() {
+            const memories = await fetch(API_BASE + '/api/admin/memories').then(r => r.json());
+            const tbody = document.getElementById('memoryTable');
+            tbody.innerHTML = memories.map(m => `
+                <tr>
+                    <td>${m.memoryId}</td>
+                    <td>${m.sessionId}</td>
+                    <td>${m.type}</td>
+                    <td>${(m.content || '').substring(0, 50)}...</td>
+                    <td>${m.importance}</td>
+                    <td>
+                        <button class="btn btn-danger" onclick="deleteMemory('${m.memoryId}')">删除</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // 删除操作
+        async function deleteAgent(id) {
+            if (confirm('确定删除 Agent: ' + id + '?')) {
+                await fetch(API_BASE + '/api/admin/agents/' + id, { method: 'DELETE' });
+                refreshAgents();
+                loadStats();
+            }
+        }
+        
+        async function deleteSkill(id) {
+            if (confirm('确定删除 Skill: ' + id + '?')) {
+                await fetch(API_BASE + '/api/admin/skills/' + id, { method: 'DELETE' });
+                refreshSkills();
+                loadStats();
+            }
+        }
+        
+        async function deleteMcp(id) {
+            if (confirm('确定删除 MCP: ' + id + '?')) {
+                await fetch(API_BASE + '/api/admin/mcp/' + id, { method: 'DELETE' });
+                refreshMcp();
+                loadStats();
+            }
+        }
+        
+        async function deleteSession(id) {
+            if (confirm('确定删除 Session: ' + id + '?')) {
+                await fetch(API_BASE + '/api/admin/sessions/' + id, { method: 'DELETE' });
+                refreshSessions();
+                loadStats();
+            }
+        }
+        
+        async function deleteMemory(id) {
+            if (confirm('确定删除 Memory: ' + id + '?')) {
+                await fetch(API_BASE + '/api/admin/memories/' + id, { method: 'DELETE' });
+                refreshMemories();
+            }
+        }
+        
+        // 表单提交
+        document.getElementById('createAgentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const form = e.target;
+            const data = {
+                agentId: form.agentId.value,
+                name: form.name.value,
+                type: form.type.value,
+                description: form.description.value,
+                systemPrompt: form.systemPrompt.value,
+                enabled: true
+            };
+            await fetch(API_BASE + '/api/admin/agents', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            hideModal('createAgent');
+            refreshAgents();
+            loadStats();
+            form.reset();
+        });
+        
+        // 初始化
+        loadStats();
+        refreshAgents();
+    </script>
+</body>
+</html>
