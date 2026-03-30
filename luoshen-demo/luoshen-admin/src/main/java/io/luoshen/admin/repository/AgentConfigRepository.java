@@ -24,6 +24,8 @@ public interface AgentConfigRepository extends JpaRepository<AgentConfigEntity, 
     
     List<AgentConfigEntity> findByParentAgentId(String parentAgentId);
     
+    List<AgentConfigEntity> findTop5ByOrderByCreatedAtDesc();
+    
     void deleteByAgentId(String agentId);
     
     boolean existsByAgentId(String agentId);
