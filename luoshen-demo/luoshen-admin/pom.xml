@@ -15,19 +15,6 @@
     <description>洛神系统管理后台 - 动态管理 Agent、Skill、MCP、Session、Memory</description>
 
     <dependencies>
-        <!-- AgentScope Core -->
-        <dependency>
-            <groupId>io.agentscope</groupId>
-            <artifactId>agentscope-core</artifactId>
-        </dependency>
-
-        <!-- Luoshen Core -->
-        <dependency>
-            <groupId>io.luoshen</groupId>
-            <artifactId>luoshen-core</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
         <!-- Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
