@@ -1,0 +1,31 @@
+# Luoshen Material Agent 配置
+
+server:
+  port: 8083
+
+spring:
+  application:
+    name: luoshen-material-agent
+
+# 洛神系统配置
+luoshen:
+  model:
+    provider: dashscope
+    dashscope:
+      api-key: ${DASHSCOPE_API_KEY:}
+      model-name: qwen-max
+      base-url: -
+    stream: true
+    enable-thinking: false
+  
+  session:
+    path: ${user.home}/.luoshen/sessions
+  
+  memory:
+    type: in-memory
+    max-size: 100
+
+logging:
+  level:
+    io.agentscope: INFO
+    io.luoshen: DEBUG
