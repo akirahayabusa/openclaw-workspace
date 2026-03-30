@@ -1,0 +1,59 @@
+# Luoshen Admin 配置
+
+server:
+  port: 9090
+
+spring:
+  application:
+    name: luoshen-admin
+  
+  # H2 数据库配置（可替换为 MySQL/PostgreSQL）
+  datasource:
+    url: jdbc:h2:file:./data/luoshen-admin;DB_CLOSE_ON_EXIT=FALSE;AUTO_RECONNECT=TRUE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  # JPA 配置
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+  
+  # H2 控制台（开发环境）
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+# 洛神系统配置
+luoshen:
+  model:
+    provider: dashscope
+    dashscope:
+      api-key: ${DASHSCOPE_API_KEY:}
+      model-name: qwen-max
+    stream: true
+    enable-thinking: false
+  
+  session:
+    path: ${user.home}/.luoshen/sessions
+  
+  memory:
+    type: in-memory
+    max-size: 100
+  
+  # Skill 存储路径
+  skill:
+    storage-path: ${user.home}/.luoshen/skills
+
+# 日志配置
+logging:
+  level:
+    io.agentscope: INFO
+    io.luoshen: DEBUG
+    org.springframework: INFO
+    org.hibernate: INFO

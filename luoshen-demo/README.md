@@ -45,6 +45,37 @@
 luoshen-demo/
 ├── pom.xml                          # 父 POM，管理依赖版本
 ├── README.md                        # 项目文档
+├── start.sh                         # 启动脚本
+├── test.sh                          # 测试脚本
+│
+├── luoshen-admin/                   # 管理后台模块 ⭐ 新增
+│   ├── pom.xml
+│   └── src/main/
+│       ├── java/io/luoshen/admin/
+│       │   ├── LuoshenAdminApplication.java  # 主应用
+│       │   ├── model/              # 数据模型
+│       │   │   ├── AgentConfigEntity.java
+│       │   │   ├── SkillConfigEntity.java
+│       │   │   ├── McpConfigEntity.java
+│       │   │   ├── SessionConfigEntity.java
+│       │   │   └── MemoryConfigEntity.java
+│       │   ├── repository/         # 数据访问层
+│       │   ├── service/            # 业务服务层
+│       │   │   ├── AgentDynamicService.java
+│       │   │   ├── SkillDynamicService.java
+│       │   │   ├── McpDynamicService.java
+│       │   │   ├── SessionManagementService.java
+│       │   │   └── MemoryManagementService.java
+│       │   └── controller/         # REST API
+│       │       ├── AgentManagementController.java
+│       │       ├── SkillManagementController.java
+│       │       ├── McpManagementController.java
+│       │       ├── SessionManagementController.java
+│       │       └── MemoryManagementController.java
+│       └── resources/
+│           ├── application.yml     # 配置文件
+│           └── static/
+│               └── index.html      # Web 管理界面
 │
 ├── luoshen-core/                    # 核心模块
 │   ├── pom.xml
@@ -544,6 +575,96 @@ FileSystemSkillRepository repository =
     new FileSystemSkillRepository(Path.of("skills/"), false);
 AgentSkill skill = repository.getSkill("new-skill");
 ```
+
+## 管理后台（luoshen-admin）
+
+### 功能概述
+
+管理后台提供**动态配置管理**能力，所有配置存储在数据库中，修改后**即时生效**，无需重启服务。
+
+### 核心能力
+
+| 管理项 | 功能 | API 路径 |
+|--------|------|----------|
+| **Agent 管理** | 创建/编辑/删除/启用禁用 Agent | `/api/admin/agents` |
+| **Skill 管理** | 创建/编辑/删除 Skill，热加载 | `/api/admin/skills` |
+| **MCP 管理** | 注册/配置/启用禁用 MCP 工具 | `/api/admin/mcp` |
+| **Session 管理** | 查看/删除会话，清理过期会话 | `/api/admin/sessions` |
+| **Memory 管理** | 查看/搜索/删除记忆 | `/api/admin/memories` |
+
+### 启动管理后台
+
+```bash
+# 设置 API Key
+export DASHSCOPE_API_KEY=your-api-key
+
+# 启动管理后台（端口 9090）
+java -jar luoshen-admin/target/luoshen-admin-1.0.0-SNAPSHOT.jar
+
+# 访问管理界面
+open http://localhost:9090
+```
+
+### API 示例
+
+#### 创建 Agent
+
+```bash
+curl -X POST http://localhost:9090/api/admin/agents \
+  -H "Content-Type: application/json" \
+  -d '{
+    "agentId": "my-agent",
+    "name": "我的智能体",
+    "type": "sub",
+    "description": "自定义智能体",
+    "systemPrompt": "你是一个智能助手...",
+    "enabled": true
+  }'
+```
+
+#### 更新 Agent（即时生效）
+
+```bash
+curl -X PUT http://localhost:9090/api/admin/agents/my-agent \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "更新后的智能体",
+    "systemPrompt": "新的系统提示词..."
+  }'
+```
+
+#### 刷新所有 Agent
+
+```bash
+curl -X POST http://localhost:9090/api/admin/agents/refresh
+```
+
+### 数据库配置
+
+默认使用 H2 嵌入式数据库，可切换为 MySQL/PostgreSQL：
+
+```yaml
+# application.yml
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/luoshen
+    username: root
+    password: password
+    driver-class-name: com.mysql.cj.jdbc.Driver
+```
+
+### Web 管理界面
+
+访问 `http://localhost:9090` 即可使用可视化界面管理：
+
+- 📊 统计面板：显示 Agent/Skill/MCP/Session 数量
+- 🤖 Agent 管理：创建、编辑、删除、启用/禁用
+- 📝 Skill 管理：创建、编辑、删除技能
+- 🔧 MCP 管理：注册、配置 MCP 工具
+- 💬 Session 管理：查看、删除会话
+- 🧠 Memory 管理：查看、搜索、删除记忆
+
+---
 
 ## 最佳实践
 
