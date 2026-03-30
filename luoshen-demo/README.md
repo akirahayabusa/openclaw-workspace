@@ -708,3 +708,236 @@ Apache License 2.0
 
 **作者：** 洛神系统开发团队  
 **更新时间：** 2026-03-30
+
+---
+
+## 🚀 当前部署状态
+
+### 公网访问地址
+
+洛神系统已成功部署在公网上，可通过以下地址访问：
+
+| 服务 | 内部地址 | 公网地址 | 状态 |
+|------|----------|----------|------|
+| **Leader Agent** | localhost:8080 | http://49.51.229.18:8080 | ✅ 运行中 |
+| **Device Agent** | localhost:8081 | http://49.51.229.18:8081 | ✅ 运行中 |
+| **Quality Agent** | localhost:8082 | http://49.51.229.18:8082 | ✅ 运行中 |
+| **Material Agent** | localhost:8083 | http://49.51.229.18:8083 | ✅ 运行中 |
+
+### 快速测试
+
+```bash
+# 测试 Leader Agent（主控智能体）
+curl -X POST http://49.51.229.18:8080/api/leader/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "你好，我是测试用户"}'
+
+# 测试 Device Agent（设备管理）
+curl -X POST http://49.51.229.18:8081/api/device/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "查询所有设备状态"}'
+
+# 测试 Quality Agent（质量检测）
+curl -X POST http://49.51.229.18:8082/api/quality/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "执行产品质量检测"}'
+
+# 测试 Material Agent（物料管理）
+curl -X POST http://49.51.229.18:8083/api/material/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "查询所有物料库存"}'
+```
+
+### API 端点说明
+
+所有 Agent 提供统一的 REST API 接口：
+
+#### 聊天接口
+
+```bash
+POST /api/{agent-type}/chat
+Content-Type: application/json
+
+{
+  "message": "用户消息"
+}
+```
+
+**支持的可选参数：**
+- `sessionId`: 会话 ID（用于多轮对话）
+
+**示例：**
+```bash
+curl -X POST http://49.51.229.18:8080/api/leader/chat \
+  -H "Content-Type: application/json" \
+  -d '{"message": "你好"}' \
+  --data-urlencode "sessionId=my-session"
+```
+
+#### 响应格式
+
+```json
+{
+  "response": "AI 回复内容",
+  "sessionId": "会话 ID",
+  "reason": "生成原因"
+}
+```
+
+#### 清除会话接口
+
+```bash
+DELETE /api/{agent-type}/session/{sessionId}
+```
+
+### 配置说明
+
+#### 1. API Key 配置
+
+默认配置文件中已设置 API Key，如需修改：
+
+**方式一：环境变量**
+```bash
+export DASHSCOPE_API_KEY=your-api-key
+```
+
+**方式二：配置文件**
+
+编辑各 Agent 的 `application.yml`：
+```yaml
+luoshen:
+  model:
+    provider: dashscope
+    dashscope:
+      apiKey: ${DASHSCOPE_API_KEY:your-api-key}
+      modelName: qwen-max
+```
+
+#### 2. 端口配置
+
+默认端口分配：
+- Leader Agent: 8080
+- Device Agent: 8081
+- Quality Agent: 8082
+- Material Agent: 8083
+
+可通过启动参数修改：
+```bash
+java -jar agent.jar --server.port=9999
+```
+
+#### 3. 网络配置
+
+默认绑定所有网络接口（`0.0.0.0`），可通过以下参数修改：
+```bash
+java -jar agent.jar --server.address=127.0.0.1  # 只监听本地
+```
+
+### 服务管理
+
+#### 启动所有服务
+
+```bash
+#!/bin/bash
+
+# 设置 API Key
+export DASHSCOPE_API_KEY=your-api-key
+
+# 启动 Leader Agent
+nohup java -jar luoshen-leader-agent/target/luoshen-leader-agent-1.0.0-SNAPSHOT.jar \
+  --server.address=0.0.0.0 --server.port=8080 > /tmp/leader.log 2>&1 &
+echo $! > /tmp/leader.pid
+
+# 启动 Device Agent
+nohup java -jar luoshen-device-agent/target/luoshen-device-agent-1.0.0-SNAPSHOT.jar \
+  --server.address=0.0.0.0 --server.port=8081 > /tmp/device.log 2>&1 &
+echo $! > /tmp/device.pid
+
+# 启动 Quality Agent
+nohup java -jar luoshen-quality-agent/target/luoshen-quality-agent-1.0.0-SNAPSHOT.jar \
+  --server.address=0.0.0.0 --server.port=8082 > /tmp/quality.log 2>&1 &
+echo $! > /tmp/quality.pid
+
+# 启动 Material Agent
+nohup java -jar luoshen-material-agent/target/luoshen-material-agent-1.0.0-SNAPSHOT.jar \
+  --server.address=0.0.0.0 --server.port=8083 > /tmp/material.log 2>&1 &
+echo $! > /tmp/material.pid
+
+echo "所有服务启动完成！"
+```
+
+#### 停止所有服务
+
+```bash
+#!/bin/bash
+
+# 停止所有服务
+kill $(cat /tmp/leader.pid 2>/dev/null) 2>/dev/null
+kill $(cat /tmp/device.pid 2>/dev/null) 2>/dev/null
+kill $(cat /tmp/quality.pid 2>/dev/null) 2>/dev/null
+kill $(cat /tmp/material.pid 2>/dev/null) 2>/dev/null
+
+echo "所有服务已停止！"
+```
+
+#### 查看服务状态
+
+```bash
+# 检查端口监听
+ss -tuln | grep -E ":(808[0-3])\s"
+
+# 查看服务进程
+ps aux | grep java | grep -E ":(808[0-3])"
+
+# 查看日志
+tail -f /tmp/leader.log
+tail -f /tmp/device.log
+tail -f /tmp/quality.log
+tail -f /tmp/material.log
+```
+
+### 系统架构图
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                    用户请求 / HTTP API                        │
+│                  http://49.51.229.18:8080                   │
+└──────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌──────────────────────────────────────────────────────────────┐
+│              Leader Agent (总控智能体)                        │
+│              - 接收用户请求                                  │
+│              - 分析任务类型                                  │
+│              - 分发给子智能体                                │
+│              - 汇总结果                                      │
+└──────────────────────────────────────────────────────────────┘
+                    │         │         │
+        ┌───────────┘         │         └───────────┐
+        ▼                     ▼                     ▼
+┌───────────────┐    ┌───────────────┐    ┌───────────────┐
+│ Device Agent  │    │ Quality Agent │    │ Material Agent│
+│   :8081       │    │    :8082       │    │    :8083       │
+│ 设备管理       │    │ 质量检测       │    │ 物料管理       │
+│ - 状态查询     │    │ - 质量检测     │    │ - 库存查询     │
+│ - 设备控制     │    │ - 问题分析     │    │ - 采购管理     │
+│ - 故障诊断     │    │ - 质量报告     │    │ - 出入库记录   │
+└───────────────┘    └───────────────┘    └───────────────┘
+```
+
+### 技术栈
+
+- **框架**: Spring Boot 3.2.0
+- **AI 框架**: AgentScope-Java 1.0.11
+- **LLM**: DashScope (通义千问) / OpenAI
+- **构建工具**: Maven 3.8+
+- **Java 版本**: JDK 17+
+- **数据库**: H2 (可配置 MySQL/PostgreSQL)
+
+### 注意事项
+
+1. **API Key**: 需要有效的 DashScope API Key 才能使用 AI 功能
+2. **网络延迟**: 公网访问可能会有一定延迟，建议在网络良好的环境下使用
+3. **并发限制**: API 调用频率有限制，请注意控制请求频率
+4. **数据安全**: 生产环境建议配置 HTTPS 和身份验证
+5. **日志管理**: 定期清理日志文件，避免占用过多磁盘空间
