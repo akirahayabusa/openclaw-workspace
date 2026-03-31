@@ -1,0 +1,1 @@
+[{"id":1,"agentId":"luoshen-leader","name":"洛神总控","description":"主控智能体","type":"LEADER","parentAgentId":null,"systemPrompt":"你是洛神平台的主控智能体","modelName":"qwen-plus","toolsJson":null,"skillsJson":null,"mcpServersJson":null,"subAgentsJson":null,"enabled":true,"createdAt":"2026-03-31T08:56:57.591692","updatedAt":"2026-03-31T08:56:57.591692"}]
