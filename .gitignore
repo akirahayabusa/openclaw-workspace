@@ -1,2 +1,8 @@
 # 独立的 Git 仓库
 wedding-invitation/
+
+# 编译产物和归档文件
+*.zip
+*.tar
+*.tar.gz
+*.rar
