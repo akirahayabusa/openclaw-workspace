@@ -19,4 +19,12 @@ public class SkillManagementViewController {
     public String uploadPage() {
         return "skill-upload";
     }
+
+    /**
+     * 技能管理列表页面
+     */
+    @GetMapping("/skills")
+    public String listPage() {
+        return "skills-list";
+    }
 }

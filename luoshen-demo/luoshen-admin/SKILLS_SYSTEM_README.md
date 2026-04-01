@@ -5,9 +5,12 @@
 本次更新实现了技能包上传和管理功能，支持：
 
 - ✅ 上传 .skill 压缩包（包含 SKILL.md、脚本、资源等）
+- ✅ 创建纯文本技能（不上传文件）
 - ✅ 灵活的类型系统（分类 + 标签 + 自定义类型）
 - ✅ 自动安全检查（检测敏感文件和危险脚本）
-- ✅ Web 管理界面（表单 + 上传混合模式）
+- ✅ Web 管理界面（上传页面、列表页面）
+- ✅ 技能查询和筛选（分页、搜索、分类筛选）
+- ✅ 技能管理（启用/禁用、更新、删除）
 
 ## 数据模型
 
@@ -45,7 +48,9 @@
 
 ## API 接口
 
-### 1. 上传技能包
+### 1. 技能管理 API
+
+#### 1.1 上传技能包
 
 ```bash
 POST /api/admin/skills/upload
@@ -71,8 +76,7 @@ curl -X POST http://localhost:9090/api/admin/skills/upload \
   -F "name=GitHub 集成" \
   -F "description=用于 GitHub 操作" \
   -F "category=dev" \
-  -F "subCategory=vcs" \
-  -F 'tags=["github","git","api"]'
+  -F "tags=[\"github\",\"git\"]"
 ```
 
 **响应：**
@@ -88,17 +92,12 @@ curl -X POST http://localhost:9090/api/admin/skills/upload \
     "packagePath": "/root/.luoshen/skills/user/github",
     "source": "user_upload",
     "riskLevel": "low",
-    "fileSize": 12345,
-    "checksum": "abc123...",
-    "category": "dev",
-    "subCategory": "vcs",
-    "tags": "[\"github\",\"git\",\"api\"]",
-    "enabled": true
+    "category": "dev"
   }
 }
 ```
 
-### 2. 创建纯文本技能
+#### 1.2 创建纯文本技能
 
 ```bash
 POST /api/admin/skills/create
@@ -114,31 +113,94 @@ Content-Type: application/json
 }
 ```
 
+#### 1.3 查询技能列表
+
+```bash
+GET /api/admin/skills?category=dev&enabled=true&page=0&size=20
+```
+
+**响应：**
+
+```json
+{
+  "content": [
+    {
+      "id": 1,
+      "skillId": "github",
+      "name": "GitHub 集成",
+      "category": "dev",
+      "enabled": true
+    }
+  ],
+  "totalElements": 1,
+  "totalPages": 1
+}
+```
+
+#### 1.4 获取技能详情
+
+```bash
+GET /api/admin/skills/{skillId}
+```
+
+#### 1.5 更新技能
+
+```bash
+PUT /api/admin/skills/{skillId}
+Content-Type: application/json
+
+{
+  "name": "更新后的名称",
+  "description": "更新后的描述",
+  "enabled": false
+}
+```
+
+#### 1.6 删除技能
+
+```bash
+DELETE /api/admin/skills/{skillId}
+```
+
+#### 1.7 切换技能状态
+
+```bash
+POST /api/admin/skills/{skillId}/toggle
+```
+
+#### 1.8 搜索技能
+
+```bash
+GET /api/admin/skills/search?keyword=github
+```
+
+#### 1.9 获取所有分类
+
+```bash
+GET /api/admin/skills/categories
+```
+
 ## Web 界面
 
-### 访问上传页面
+### 1. 技能包上传页面
 
-```
-http://localhost:9090/skills/upload
-```
+**访问地址：** `http://localhost:9090/skills/upload`
 
-### 功能特性
+**功能：**
+- 拖拽上传技能包
+- 表单填写（技能 ID、名称、描述、分类、标签）
+- 实时验证和进度显示
 
-1. **拖拽上传**
-   - 支持拖拽文件到上传区域
-   - 或点击上传区域选择文件
+### 2. 技能管理列表页面
 
-2. **表单填写**
-   - 技能 ID（可选，自动生成）
-   - 技能名称（可选，从 SKILL.md 提取）
-   - 技能描述（可选）
-   - 分类选择（可选）
-   - 标签输入（可选）
+**访问地址：** `http://localhost:9090/skills`
 
-3. **实时验证**
-   - 文件格式检查
-   - 文件大小限制（50MB）
-   - 实时进度显示
+**功能：**
+- 技能列表展示（分页）
+- 搜索和筛选（按分类、来源、状态）
+- 查看详情
+- 启用/禁用
+- 删除技能
 
 ## 技能包格式
 
@@ -228,15 +290,21 @@ luoshen:
     └── luoshen-admin.mdb     # H2 数据库
 ```
 
-## 下一步开发
-
-- [ ] Phase 2: 技能包解析和验证（进行中）
-- [ ] Phase 3: Agent 技能加载
-- [ ] Phase 4: 技能绑定 API
-- [ ] Phase 5: 前端管理界面
-- [ ] Phase 6: 测试和文档
-
 ## 测试
+
+### 单元测试
+
+```bash
+cd luoshen-demo/luoshen-admin
+mvn test -Dtest=SkillQueryServiceTest
+```
+
+### 集成测试
+
+```bash
+cd luoshen-demo/luoshen-admin
+mvn test -Dtest=SkillManagementIntegrationTest
+```
 
 ### 启动服务
 
@@ -249,9 +317,13 @@ mvn spring-boot:run
 
 ### 测试上传
 
-访问：`http://localhost:9090/skills/upload`
+访问上传页面：`http://localhost:9090/skills/upload`
 
-### 测试 API
+### 测试列表
+
+访问列表页面：`http://localhost:9090/skills`
+
+### API 测试
 
 ```bash
 # 准备测试技能包
@@ -264,6 +336,14 @@ zip -r test-skill.skill test-skill/
 curl -X POST http://localhost:9090/api/admin/skills/upload \
   -F "file=@test-skill.skill"
 ```
+
+## 实施进度
+
+- ✅ **Phase 1**: 数据模型扩展（已完成）
+- ✅ **Phase 2**: 技能包上传功能（已完成）
+- ⏳ **Phase 3**: Agent 技能加载（待实现）
+- ⏳ **Phase 4**: 前端完善（待实现）
+- ⏳ **Phase 5**: 测试和文档（进行中）
 
 ## 注意事项
 
@@ -300,10 +380,10 @@ A:
 
 ### Q: 如何禁用某个技能？
 
-A: 更新 SkillConfigEntity 的 `enabled` 字段为 `false`。
+A: 使用 `POST /api/admin/skills/{skillId}/toggle` 接口切换启用状态。
 
 ---
 
 **创建时间：** 2026-04-01
-**版本：** v1.0
-**状态：** Phase 1 完成
+**版本：** v1.1
+**状态：** Phase 2 完成
