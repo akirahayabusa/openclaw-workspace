@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 public class AgentDynamicService {
     
     private final AgentConfigRepository agentConfigRepository;
+    private final AgentSkillLoader agentSkillLoader;
     
     /**
      * 创建 Agent 配置
@@ -197,5 +198,26 @@ public class AgentDynamicService {
                 throw new IllegalArgumentException("Sub Agent 的父 Agent 必须是 CORE 类型");
             }
         }
+    }
+
+    /**
+     * 为 Agent 加载技能
+     * 
+     * @param agentId Agent ID
+     * @return 技能列表
+     */
+    public List<io.agentscope.skill.AgentSkill> loadAgentSkills(String agentId) {
+        log.info("为 Agent {} 加载技能", agentId);
+        return agentSkillLoader.loadSkillsForAgent(agentId);
+    }
+
+    /**
+     * 获取 Agent 技能配置摘要
+     * 
+     * @param agentId Agent ID
+     * @return 配置摘要
+     */
+    public Map<String, Object> getAgentSkillSummary(String agentId) {
+        return agentSkillLoader.getAgentSkillSummary(agentId);
     }
 }

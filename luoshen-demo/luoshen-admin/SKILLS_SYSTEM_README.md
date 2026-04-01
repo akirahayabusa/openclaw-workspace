@@ -137,47 +137,98 @@ GET /api/admin/skills?category=dev&enabled=true&page=0&size=20
 }
 ```
 
-#### 1.4 获取技能详情
+### 2. Agent 技能绑定 API
+
+#### 2.1 绑定技能到 Agent
 
 ```bash
-GET /api/admin/skills/{skillId}
-```
-
-#### 1.5 更新技能
-
-```bash
-PUT /api/admin/skills/{skillId}
+POST /api/admin/agents/{agentId}/skills/bind
 Content-Type: application/json
 
 {
-  "name": "更新后的名称",
-  "description": "更新后的描述",
-  "enabled": false
+  "skillId": "github",
+  "bindMode": "custom",
+  "priority": 0,
+  "config": {}
 }
 ```
 
-#### 1.6 删除技能
+**响应：**
 
-```bash
-DELETE /api/admin/skills/{skillId}
+```json
+{
+  "success": true,
+  "message": "技能绑定成功",
+  "relation": {
+    "id": 1,
+    "agentId": "device-agent",
+    "skillId": "github",
+    "bindMode": "custom",
+    "enabled": true,
+    "priority": 0
+  }
+}
 ```
 
-#### 1.7 切换技能状态
+#### 2.2 查询 Agent 的技能
 
 ```bash
-POST /api/admin/skills/{skillId}/toggle
+GET /api/admin/agents/{agentId}/skills
 ```
 
-#### 1.8 搜索技能
+**响应：**
 
-```bash
-GET /api/admin/skills/search?keyword=github
+```json
+[
+  {
+    "agentId": "device-agent",
+    "skillId": "github",
+    "name": "GitHub 集成",
+    "bindMode": "custom",
+    "enabled": true,
+    "priority": 0,
+    "category": "dev",
+    "source": "user_upload",
+    "riskLevel": "low"
+  }
+]
 ```
 
-#### 1.9 获取所有分类
+#### 2.3 批量绑定技能
 
 ```bash
-GET /api/admin/skills/categories
+POST /api/admin/agents/{agentId}/skills/batch
+Content-Type: application/json
+
+{
+  "skillIds": ["github", "git"],
+  "bindMode": "custom"
+}
+```
+
+#### 2.4 设置 Agent 技能配置
+
+```bash
+PUT /api/admin/agents/{agentId}/skills/config
+Content-Type: application/json
+
+{
+  "mode": "custom",
+  "allowed": ["github", "git"],
+  "denied": []
+}
+```
+
+#### 2.5 解绑技能
+
+```bash
+DELETE /api/admin/agents/{agentId}/skills/{skillId}
+```
+
+#### 2.6 切换技能绑定状态
+
+```bash
+POST /api/admin/agents/{agentId}/skills/{skillId}/toggle
 ```
 
 ## Web 界面
