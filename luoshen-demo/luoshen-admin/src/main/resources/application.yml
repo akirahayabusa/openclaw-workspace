@@ -39,17 +39,24 @@ luoshen:
       model-name: qwen-max
     stream: true
     enable-thinking: false
-  
+
   session:
     path: ${user.home}/.luoshen/sessions
-  
+
   memory:
     type: in-memory
     max-size: 100
-  
-  # Skill 存储路径
-  skill:
+
+  # Skills 配置
+  skills:
+    # 技能存储路径
     storage-path: ${user.home}/.luoshen/skills
+    # 最大文件大小（字节，默认 50MB）
+    max-file-size: ${LUOSHEN_SKILL_MAX_SIZE:52428800}
+    # 允许的文件扩展名
+    allowed-extensions: .skill,.zip
+    # 是否自动创建技能目录
+    auto-create-dir: true
 
 # 日志配置
 logging:
