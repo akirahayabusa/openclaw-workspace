@@ -27,4 +27,12 @@ public class SkillManagementViewController {
     public String listPage() {
         return "skills-list";
     }
+
+    /**
+     * Agent 技能绑定页面
+     */
+    @GetMapping("/agents/skills")
+    public String agentSkillsBindingPage() {
+        return "agent-skills-binding";
+    }
 }

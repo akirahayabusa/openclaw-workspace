@@ -2,256 +2,131 @@
 
 ## 功能概述
 
-本次更新实现了技能包上传和管理功能，支持：
+本次更新实现了洛神平台技能管理系统，支持：
 
 - ✅ 上传 .skill 压缩包（包含 SKILL.md、脚本、资源等）
 - ✅ 创建纯文本技能（不上传文件）
 - ✅ 灵活的类型系统（分类 + 标签 + 自定义类型）
 - ✅ 自动安全检查（检测敏感文件和危险脚本）
-- ✅ Web 管理界面（上传页面、列表页面）
+- ✅ Web 管理界面（上传页面、列表页面、绑定页面）
 - ✅ 技能查询和筛选（分页、搜索、分类筛选）
-- ✅ 技能管理（启用/禁用、更新、删除）
+- ✅ Agent 技能绑定（inherit/custom/none 三种模式）
+- ✅ 完整的 REST API（15 个接口）
 
-## 数据模型
+## 快速开始
 
-### 1. SkillConfigEntity（扩展）
+### 访问管理后台
 
-新增字段：
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `packagePath` | String | 技能包路径 |
-| `source` | String | 来源：builtin, user_upload, marketplace |
-| `riskLevel` | String | 风险等级：low, medium, high |
-| `fileSize` | Long | 文件大小 |
-| `checksum` | String | SHA-256 校验和 |
-| `hasScripts` | Boolean | 是否包含脚本 |
-| `scriptFiles` | String | 脚本列表（JSON） |
-| `category` | String | 主分类（可选） |
-| `subCategory` | String | 子分类（可选） |
-| `tags` | String | 标签数组（JSON） |
-| `customType` | String | 自定义类型 |
-| `capabilities` | String | 能力特征（JSON） |
-
-### 2. AgentSkillRelationEntity（新增）
-
-定义 Agent 和 Skill 的多对多关系：
-
-| 字段 | 类型 | 说明 |
-|------|------|------|
-| `agentId` | String | Agent ID |
-| `skillId` | String | Skill ID |
-| `bindMode` | String | 绑定模式：inherit, custom, none |
-| `enabled` | Boolean | 是否启用 |
-| `priority` | Integer | 优先级 |
-| `config` | String | 配置参数（JSON） |
-
-## API 接口
-
-### 1. 技能管理 API
-
-#### 1.1 上传技能包
-
-```bash
-POST /api/admin/skills/upload
-Content-Type: multipart/form-data
-
-参数：
-- file: 技能包文件（必填）
-- skillId: 技能 ID（可选）
-- name: 技能名称（可选）
-- description: 技能描述（可选）
-- category: 主分类（可选）
-- subCategory: 子分类（可选）
-- tags: 标签（JSON 数组，可选）
-- customType: 自定义类型（可选）
+```
+http://localhost:9090/
 ```
 
-**示例：**
+### 功能页面
+
+| 页面 | 路径 | 说明 |
+|------|------|------|
+| 首页 | `/` | 系统概览和导航 |
+| 技能管理 | `/skills` | 技能列表、搜索、筛选 |
+| 上传技能包 | `/skills/upload` | 上传 .skill 压缩包 |
+| Agent 技能绑定 | `/agents/skills` | 为 Agent 绑定技能 |
+| Agent 树形结构 | `/api/admin/agents/tree` | API 返回 JSON |
+
+## 技能包上传
+
+### 上传页面
+
+访问：`http://localhost:9090/skills/upload`
+
+**功能：**
+- 拖拽上传 .skill 或 .zip 文件
+- 自动解压和验证
+- 表单填写（技能 ID、名称、描述、分类、标签）
+- 实时进度显示
+
+**API：**
 
 ```bash
 curl -X POST http://localhost:9090/api/admin/skills/upload \
   -F "file=@github.skill" \
   -F "skillId=github" \
   -F "name=GitHub 集成" \
-  -F "description=用于 GitHub 操作" \
   -F "category=dev" \
-  -F "tags=[\"github\",\"git\"]"
+  -F 'tags=["github","git","api"]'
 ```
 
-**响应：**
+## 技能管理
 
-```json
-{
-  "success": true,
-  "message": "技能包上传成功",
-  "skill": {
-    "id": 1,
-    "skillId": "github",
-    "name": "GitHub 集成",
-    "packagePath": "/root/.luoshen/skills/user/github",
-    "source": "user_upload",
-    "riskLevel": "low",
-    "category": "dev"
-  }
-}
-```
+### 技能列表
 
-#### 1.2 创建纯文本技能
-
-```bash
-POST /api/admin/skills/create
-Content-Type: application/json
-
-{
-  "skillId": "prompt-template",
-  "name": "提示词模板",
-  "description": "用于生成提示词...",
-  "content": "# 技能说明\n...",
-  "category": "dev",
-  "tags": ["prompt", "template"]
-}
-```
-
-#### 1.3 查询技能列表
-
-```bash
-GET /api/admin/skills?category=dev&enabled=true&page=0&size=20
-```
-
-**响应：**
-
-```json
-{
-  "content": [
-    {
-      "id": 1,
-      "skillId": "github",
-      "name": "GitHub 集成",
-      "category": "dev",
-      "enabled": true
-    }
-  ],
-  "totalElements": 1,
-  "totalPages": 1
-}
-```
-
-### 2. Agent 技能绑定 API
-
-#### 2.1 绑定技能到 Agent
-
-```bash
-POST /api/admin/agents/{agentId}/skills/bind
-Content-Type: application/json
-
-{
-  "skillId": "github",
-  "bindMode": "custom",
-  "priority": 0,
-  "config": {}
-}
-```
-
-**响应：**
-
-```json
-{
-  "success": true,
-  "message": "技能绑定成功",
-  "relation": {
-    "id": 1,
-    "agentId": "device-agent",
-    "skillId": "github",
-    "bindMode": "custom",
-    "enabled": true,
-    "priority": 0
-  }
-}
-```
-
-#### 2.2 查询 Agent 的技能
-
-```bash
-GET /api/admin/agents/{agentId}/skills
-```
-
-**响应：**
-
-```json
-[
-  {
-    "agentId": "device-agent",
-    "skillId": "github",
-    "name": "GitHub 集成",
-    "bindMode": "custom",
-    "enabled": true,
-    "priority": 0,
-    "category": "dev",
-    "source": "user_upload",
-    "riskLevel": "low"
-  }
-]
-```
-
-#### 2.3 批量绑定技能
-
-```bash
-POST /api/admin/agents/{agentId}/skills/batch
-Content-Type: application/json
-
-{
-  "skillIds": ["github", "git"],
-  "bindMode": "custom"
-}
-```
-
-#### 2.4 设置 Agent 技能配置
-
-```bash
-PUT /api/admin/agents/{agentId}/skills/config
-Content-Type: application/json
-
-{
-  "mode": "custom",
-  "allowed": ["github", "git"],
-  "denied": []
-}
-```
-
-#### 2.5 解绑技能
-
-```bash
-DELETE /api/admin/agents/{agentId}/skills/{skillId}
-```
-
-#### 2.6 切换技能绑定状态
-
-```bash
-POST /api/admin/agents/{agentId}/skills/{skillId}/toggle
-```
-
-## Web 界面
-
-### 1. 技能包上传页面
-
-**访问地址：** `http://localhost:9090/skills/upload`
+访问：`http://localhost:9090/skills`
 
 **功能：**
-- 拖拽上传技能包
-- 表单填写（技能 ID、名称、描述、分类、标签）
-- 实时验证和进度显示
-
-### 2. 技能管理列表页面
-
-**访问地址：** `http://localhost:9090/skills`
-
-**功能：**
-- 技能列表展示（分页）
-- 搜索和筛选（按分类、来源、状态）
+- 分页展示所有技能
+- 搜索和筛选
 - 查看详情
 - 启用/禁用
 - 删除技能
+
+### 创建纯文本技能
+
+```bash
+curl -X POST http://localhost:9090/api/admin/skills/create \
+  -H "Content-Type: application/json" \
+  -d '{
+    "skillId": "prompt-template",
+    "name": "提示词模板",
+    "description": "用于生成提示词",
+    "content": "# 提示词模板\n\n这是一个模板",
+    "category": "dev",
+    "riskLevel": "low"
+  }'
+```
+
+## Agent 技能绑定
+
+### 绑定页面
+
+访问：`http://localhost:9090/agents/skills`
+
+**功能：**
+- 下拉选择 Agent
+- 左侧：可用技能列表
+- 右侧：已绑定技能列表
+- 双击或拖拽绑定/解绑
+- 保存配置
+
+### API 示例
+
+```bash
+# 绑定单个技能
+curl -X POST http://localhost:9090/api/admin/agents/device-agent/skills/bind \
+  -H "Content-Type: application/json" \
+  -d '{
+    "skillId": "github",
+    "bindMode": "custom",
+    "priority": 0
+  }'
+
+# 批量绑定
+curl -X POST http://localhost:9090/api/admin/agents/device-agent/skills/batch \
+  -H "Content-Type: application/json" \
+  -d '{
+    "skillIds": ["github", "git"],
+    "bindMode": "custom"
+  }'
+
+# 设置技能配置
+curl -X PUT http://localhost:9090/api/admin/agents/device-agent/skills/config \
+  -H "Content-Type: application/json" \
+  -d '{
+    "mode": "custom",
+    "allowed": ["github", "git"],
+    "denied": []
+  }'
+
+# 查询 Agent 的技能
+curl http://localhost:9090/api/admin/agents/device-agent/skills
+```
 
 ## 技能包格式
 
@@ -287,6 +162,22 @@ description: 这个技能用于...
 2. 步骤二
 ```
 
+## 技能类型系统
+
+### 灵活的分类
+
+**分类（可选）：**
+- 主分类：dev, ops, data, integration
+- 子分类：git, cicd, analysis
+
+**标签（推荐）：**
+- 多标签支持：["github", "git", "api"]
+- 用于灵活组织
+
+**自定义类型（兜底）：**
+- 不满足预定义分类时使用
+- 用户可自由定义
+
 ## 安全检查
 
 系统会自动进行以下安全检查：
@@ -304,58 +195,35 @@ description: 这个技能用于...
 4. **Zip Slip 防护**
    - 防止恶意文件路径穿越
 
-## 配置说明
+## API 接口汇总
 
-### application.yml
+### 技能管理 API（8个）
 
-```yaml
-luoshen:
-  skills:
-    # 技能存储路径
-    storage-path: ${user.home}/.luoshen/skills
-    # 最大文件大小（字节，默认 50MB）
-    max-file-size: 52428800
-    # 允许的文件扩展名
-    allowed-extensions: .skill,.zip
-    # 是否自动创建技能目录
-    auto-create-dir: true
-```
+| 接口 | 方法 | 说明 |
+|------|------|------|
+| `/api/admin/skills/upload` | POST | 上传技能包 |
+| `/api/admin/skills/create` | POST | 创建纯文本技能 |
+| `/api/admin/skills` | GET | 查询技能列表（分页、筛选） |
+| `/api/admin/skills/{skillId}` | GET | 获取技能详情 |
+| `/api/admin/skills/{skillId}` | PUT | 更新技能 |
+| `/api/admin/skills/{skillId}` | DELETE | 删除技能 |
+| `/api/admin/skills/{skillId}/toggle` | POST | 切换状态 |
+| `/api/admin/skills/search` | GET | 搜索技能 |
+| `/api/admin/skills/categories` | GET | 获取所有分类 |
 
-## 存储结构
+### Agent 技能绑定 API（7个）
 
-```
-~/.luoshen/
-├── skills/
-│   ├── builtin/              # 内置技能（只读）
-│   │   ├── github/
-│   │   └── obsidian/
-│   │
-│   └── user/                 # 用户技能
-│       ├── github/
-│       │   ├── SKILL.md
-│       │   ├── scripts/
-│       │   └── references/
-│       └── my-skill/
-│
-└── data/
-    └── luoshen-admin.mdb     # H2 数据库
-```
+| 接口 | 方法 | 说明 |
+|------|------|------|
+| `/api/admin/agents/{agentId}/skills/bind` | POST | 绑定技能 |
+| `/api/admin/agents/{agentId}/skills/{skillId}` | DELETE | 解绑技能 |
+| `/api/admin/agents/{agentId}/skills` | GET | 查询 Agent 的技能 |
+| `/api/admin/agents/{agentId}/skills/batch` | POST | 批量绑定 |
+| `/api/admin/agents/{agentId}/skills/config` | PUT | 设置技能配置 |
+| `/api/admin/agents/{agentId}/skills/{skillId}/toggle` | POST | 切换状态 |
+| `/api/admin/agents/{agentId}/skills` | DELETE | 删除所有绑定 |
 
 ## 测试
-
-### 单元测试
-
-```bash
-cd luoshen-demo/luoshen-admin
-mvn test -Dtest=SkillQueryServiceTest
-```
-
-### 集成测试
-
-```bash
-cd luoshen-demo/luoshen-admin
-mvn test -Dtest=SkillManagementIntegrationTest
-```
 
 ### 启动服务
 
@@ -366,75 +234,29 @@ cd luoshen-admin
 mvn spring-boot:run
 ```
 
-### 测试上传
-
-访问上传页面：`http://localhost:9090/skills/upload`
-
-### 测试列表
-
-访问列表页面：`http://localhost:9090/skills`
-
-### API 测试
+### 运行测试
 
 ```bash
-# 准备测试技能包
-cd /tmp
-mkdir -p test-skill
-echo -e "---\nname: Test Skill\ndescription: 测试技能\n---\n\n# 测试\n这是一个测试技能" > test-skill/SKILL.md
-zip -r test-skill.skill test-skill/
+# 所有测试
+cd luoshen-demo/luoshen-admin
+mvn test
 
-# 上传
-curl -X POST http://localhost:9090/api/admin/skills/upload \
-  -F "file=@test-skill.skill"
+# 特定测试
+mvn test -Dtest=SkillQueryServiceTest
+mvn test -Dtest=SkillBindingServiceTest
+mvn test -Dtest=AgentSkillBindingIntegrationTest
 ```
 
 ## 实施进度
 
-- ✅ **Phase 1**: 数据模型扩展（已完成）
-- ✅ **Phase 2**: 技能包上传功能（已完成）
-- ⏳ **Phase 3**: Agent 技能加载（待实现）
-- ⏳ **Phase 4**: 前端完善（待实现）
-- ⏳ **Phase 5**: 测试和文档（进行中）
-
-## 注意事项
-
-1. **文件上传限制**
-   - 最大 50MB
-   - 只支持 .skill 和 .zip 格式
-
-2. **安全考虑**
-   - 上传的脚本会经过安全检查
-   - 高风险技能需要管理员确认
-
-3. **兼容性**
-   - 旧的 `type` 字段已标记为 `@Deprecated`
-   - 建议使用新的 `category + tags + customType` 系统
-
-## 常见问题
-
-### Q: 技能包上传失败？
-
-A: 检查以下几点：
-- 文件格式是否正确（.skill 或 .zip）
-- 文件大小是否超过 50MB
-- SKILL.md 是否存在且格式正确
-
-### Q: 如何创建纯文本技能？
-
-A: 使用 `/api/admin/skills/create` 接口，只提供 content 字段，不上传文件。
-
-### Q: 分类和标签有什么区别？
-
-A:
-- **分类**：层级结构（主分类 + 子分类），用于快速筛选
-- **标签**：平面结构，可以多个，用于灵活组织
-
-### Q: 如何禁用某个技能？
-
-A: 使用 `POST /api/admin/skills/{skillId}/toggle` 接口切换启用状态。
+- ✅ Phase 1: 数据模型扩展
+- ✅ Phase 2: 技能包上传功能
+- ✅ Phase 3: Agent 技能加载和绑定
+- ✅ Phase 4: 前端完善
+- ⏳ Phase 5: 测试和文档（进行中）
 
 ---
 
-**创建时间：** 2026-04-01
-**版本：** v1.1
-**状态：** Phase 2 完成
+**版本：** v1.0
+**状态：** Phase 1-4 完成
+**更新时间：** 2026-04-01
