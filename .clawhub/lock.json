@@ -44,6 +44,10 @@
     "tavily-search": {
       "version": "1.0.0",
       "installedAt": 1774487610843
+    },
+    "web-tools-guide": {
+      "version": "1.0.0",
+      "installedAt": 1775019119089
     }
   }
 }
