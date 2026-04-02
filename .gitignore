@@ -5,5 +5,8 @@ wedding-invitation/
 *.zip
 *.tar
 *.tar.gz
-*.rarluoshen-platform/
+*.rar
+
+# luoshen-platform 和 agentscope-java 作为独立仓库管理
+luoshen-platform/
 agentscope-java/
