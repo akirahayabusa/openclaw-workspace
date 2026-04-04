@@ -10,3 +10,6 @@ wedding-invitation/
 # luoshen-platform 和 agentscope-java 作为独立仓库管理
 luoshen-platform/
 agentscope-java/
+
+# 日志文件
+logs/
