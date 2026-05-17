@@ -1,11 +1,11 @@
 {
   "lastChecks": {
-    "daily-reminder": "2026-05-16",
+    "daily-reminder": "2026-05-17",
     "weekly-reminder": "2026-05-12",
-    "biweekly-reminder": "2026-05-10",
+    "biweekly-reminder": "2026-05-17",
     "study-reminder": "2026-05-15",
-    "health-check": "2026-05-16",
-    "last-heartbeat": "2026-05-16T08:26:00+08:00",
-    "git-backup": "2026-05-16T08:26:00+08:00"
+    "health-check": "2026-05-17",
+    "last-heartbeat": "2026-05-17T08:26:00+08:00",
+    "git-backup": "2026-05-17T08:26:00+08:00"
   }
 }
